@@ -8,21 +8,26 @@
 	<div id="app">
 		<h1>Create Order</h1>
 
-		<form method="post" action="{{route('orders.store')}}">
-			@csrf
-			
+		<form method="post" action="{{route('orders.update',$order->id)}}">
+			@csrf @method('PUT')
+
 			<hr>
 			<h3>Order</h3>
 
 			<p>
 				Table Number:
-				<input type="Number" name="table_number">
+				<input type="Number" name="table_number" value="{{$order->table_number}}">
 			</p>
 			<p>
 				Payments:
 				<select name="payment_id">
 					@foreach ($payments as $payment)
-						<option value="{{$payment->id}}">{{$payment->name}}</option>
+						<option 
+						value="{{$payment->id}}"
+						{{$order->payment_id==$payment->id?'selected':''}} 
+						>
+							{{$payment->name}}
+						</option>
 					@endforeach
 				</select>
 			</p>
@@ -39,7 +44,7 @@
 				</select>
 				<input type="number" name="quantity[]" v-model="order.quantity"> pcs : 
 				Rp <input type="number" name="subtotal[]" :value="subtotal(order.product_id, order.quantity, index)" readonly>
-				<button type="submit" @click="dellDetail(index)">Deletes</button>
+				<button type="submit" @click="dellDetail(index)" >Deletes</button>
 			</p>
 
 			<button type="button" @click="addDetail()" >Add</button>
@@ -97,6 +102,17 @@
 					.map(order=>order.subtotal)
 					.reduce((prev, next)=>prev+next);
 				}
+			},
+			created(){
+				var orders 	= [];
+				@foreach ($order->orderDetail as $index => $detail)
+					orders[{{$index}}] = {
+						product_id: {{$detail->product_id}},
+						quantity: {{$detail->quantity}}, 
+						subtotal: {{$detail->subtotal}},
+					};
+				@endforeach
+				this.orders = orders;
 			}
 		});
 	</script>

@@ -5,6 +5,9 @@
 </head>
 <body>
 
+	<h1>Order List</h1>
+	<a href="{{route()}}"></a>
+
 	<thead>
 		<tr>
 			<td>Table Number</td>
@@ -23,7 +26,12 @@
 				<td>{{$row->total}}</td>
 				<td>{{$row->user->name}}</td>
 			</tr>
-			<a href="{{route('route.show',$order->id)}}">Cek</a>
+			<form method="post" action="{{ route('orders.destroy',$order->id) }}">
+				<a href="{{route('orders.show',$order->id)}}">Detail</a>
+				<a href="{{route('orders.edit',$order->id)}}">edit</a>
+				@csrf @method('DELETE')
+				<button>Delete</button>
+			</form>
 		@endforeache
 	</tbody>
 
